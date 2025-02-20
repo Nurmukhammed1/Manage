@@ -3,10 +3,12 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const morgan = require('morgan');
-const userRoutes = require('./routes/userRoutes');
-const eventRoutes = require('./routes/eventRoutes');
-const registrationRoutes = require('./routes/registrationRoutes');
+const userRoutes = require('./Routes/userRoutes');
+const eventRoutes = require('./Routes/eventRoutes');
+const registrationRoutes = require('./Routes/registrationRoutes');
 const cors = require('cors');
+
+require('dotenv').config();
 
 const app = express();
 app.use(bodyParser.json());
@@ -28,9 +30,9 @@ db.once('open', () => console.log('Connected to MongoDB'));
 
 
 // Routes
-app.use('/users', userRoutes); // User routes
-app.use('/events', eventRoutes); // Event routes
-app.use('/registrations', registrationRoutes); // Registration routes
+app.use('/api', userRoutes); // User routes
+app.use('/api', eventRoutes); // Event routes
+app.use('/api', registrationRoutes); // Registration routes
 
 // Change Stream for New Event Notifications
 db.watch([{ $match: { 'ns.coll': 'events' } }]).on('change', change => {

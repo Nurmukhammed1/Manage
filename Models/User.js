@@ -1,18 +1,70 @@
-// models/User.js
 const mongoose = require('mongoose');
 
-// Profile Schema (One-to-One Relationship)
 const profileSchema = new mongoose.Schema({
     bio: String,
-    socialLinks: [String]
-});
-
-// User Schema
+    socialLinks: [{
+      platform: String,
+      url: String
+    }],
+    preferences: {
+      eventCategories: [String],
+      notifications: {
+        email: Boolean,
+        push: Boolean,
+        sms: Boolean
+      },
+      privacy: {
+        showProfile: Boolean,
+        showAttendance: Boolean
+      }
+    },
+    location: {
+      city: String,
+      country: String,
+      timezone: String
+    }
+  });
+  
 const userSchema = new mongoose.Schema({
-    name: { type: String, required: true }, // User name
-    email: { type: String, unique: true, required: true }, // Unique email
-    role: { type: String, enum: ['organizer', 'attendee'], required: true }, // Role validation
-    profile: { type: mongoose.Schema.Types.ObjectId, ref: 'Profile' } // Reference to Profile
+    name: {
+      first: { type: String, required: true },
+      last: { type: String, required: true }
+    },
+    email: { 
+      type: String, 
+      unique: true, 
+      required: true 
+    },
+    phone: {
+      number: String,
+      verified: Boolean
+    },
+    role: { 
+      type: String, 
+      enum: ['admin', 'organizer', 'attendee', 'staff'],
+      required: true 
+    },
+    profile: profileSchema,
+    authentication: {
+      password: String,
+      mfaEnabled: Boolean,
+      lastLogin: Date,
+      loginHistory: [{
+        timestamp: Date,
+        ip: String,
+        device: String
+      }]
+    },
+    organizerMetrics: {
+      eventsCreated: Number,
+      totalAttendees: Number,
+      averageRating: Number
+    }
 });
-
+  
+// Indexes
+userSchema.index({ 'name.first': 1, 'name.last': 1 });
+userSchema.index({ email: 1 }, { unique: true });
+userSchema.index({ role: 1 });
+  
 module.exports = mongoose.model('User', userSchema);
