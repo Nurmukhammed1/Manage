@@ -29,7 +29,7 @@ exports.createEvent = async (req, res) => {
     }
   };
   
-  exports.getEvents = async (req, res) => {
+exports.getEvents = async (req, res) => {
     const { 
       page = 1, 
       limit = 10, 
